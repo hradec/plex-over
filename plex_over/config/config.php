@@ -11,7 +11,8 @@
 |	http://example.com/
 |
 */
-$config['base_url']	= "http://localhost/plex_over";
+$config['base_url']	= "http://hradec.no-ip.org:40001/plex";
+//$config['base_url']	= "http://192.168.1.163:4001/plex";
 
 /*
 |--------------------------------------------------------------------------
@@ -301,7 +302,7 @@ $config['csrf_protection'] = FALSE;
 | by the output class.  Do not "echo" any values with compression enabled.
 |
 */
-$config['compress_output'] = FALSE;
+$config['compress_output'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------

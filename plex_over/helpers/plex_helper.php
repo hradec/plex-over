@@ -52,7 +52,10 @@ function duration($seconds, $type = 'music')
 	$m = (int)($seconds / 60); $s = $seconds % 60;	
 	$h = (int)($m / 60); $m = $m % 60;
 	
-	return ($type == 'movie') ? $h.'h '.$m : $m.' : '.$s;
+	$ret = ($type == 'movie') ? $h.'h '.$m :
+           ($type == 'flv') ? $h.':'.$m.':'.$s :
+           $m.' : '.$s;
+    return $ret;
 }
 
 /**

@@ -63,11 +63,12 @@ class Transcode {
 
 	  $params->width	= $opts->width;
 	  $params->height	= $opts->height;
-	  $params->url		= $this->ci->plex_url.$thumb;
+	  $params->url		= $this->ci->plex_local.$thumb;
+      $key = '&X-Plex-Token='.$this->plex_token;
 		
 		if (is_relative_link($thumb))
 		{
-			$thumb = $this->ci->plex_url.$this->img_transpath.http_build_query($params);
+			$thumb = $this->ci->plex_url.$this->img_transpath.http_build_query($params).$key ;
 		}
 	  // define the source attribute
 	  $source = ($opts->type == 'lazy') ? 'data-src' : 'src';
@@ -111,7 +112,7 @@ class Transcode {
 		$params->quality		= $opts->quality;
 		$params->offset			= $opts->offset;
 		$params->ratingKey	= (string)$opts->ratingKey;
-		$params->url				= $this->ci->plex_url.$part->key;
+		$params->url				= $this->ci->plex_local.$part->key;
 		//$params->httpCookies= '';
 		//$params->userAgent	= '';
 		$transcode_url = $this->m3u8_transpath.http_build_query($params);
@@ -145,6 +146,7 @@ class Transcode {
 		$params['X-Plex-Access-Key']	= $this->public_key;
 		$params['X-Plex-Access-Time']	= $now;
 		$params['X-Plex-Access-Code']	= $hash;
+        $params['X-Plex-Token']	= $this->plex_token;
 
 		return $params;
 	}

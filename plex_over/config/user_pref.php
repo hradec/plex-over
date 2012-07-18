@@ -25,9 +25,9 @@ $config['password']	= '';
 $config['template'] = "origin";
 
 // enable plex h264 transcoding (true/false)
-$config['video_transcode'] = false;
+$config['video_transcode'] = true;
 // quality: 1 (lower) to 5 (higher)
-$config['video_quality'] 	 = 5; 
+$config['video_quality'] 	 = 3; 
 
 /*
 subtitles folder (copied inside if subtitles are found)
@@ -53,9 +53,9 @@ $config['cache_expire']	= '';
 // the PRIVATE url of the Plex Server (no trailing slash !!!!)
 // Used to retreive xml files. If your running plex server on same
 // host, prefer localhost (no name/dns resolution required = faster)
-$config['plex_local'] = 'http://localhost:32400';
+$config['plex_local'] = 'http://192.168.1.165:32400';
 // the PUBLIC url of the Plex Server (no trailing slash !!!!)
 // used in frontend for downloads and images
-$config['plex_url'] = 'http://localhost:32400';
+$config['plex_url'] = "http://hradec.no-ip.org:23648";
 
 

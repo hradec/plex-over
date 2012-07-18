@@ -57,12 +57,35 @@
 			 </h1>
 		</div>
 		<div id="episode-player">
+            <!--
 			<div class="video-js-box left">
 				<video data-ratio="<?= $episode->attributes->aspectRatio ?>" id="show-player" class="video-js" controls="controls" x-webkit-airplay="allow">
-					<source src="<?= $this->transcode->video($episode->media->part[0], array('ratingKey' => $item->key)) ?>"  type="video/mp4">
+					<source src="<?= $this->transcode->video($episode->media->part[0], array('ratingKey' => $item->key)) ?>"  type='video/webm; codecs="vp8.0, vorbis"'>
 					<track kind="subtitles" src="<?= $episode->media->part[0]->subtitles ?>" srclang="en-US" label="English"></track>
 				</video>
 			</div>
+            <video width="640" height="360" controls="controls" autoplay="autoplay" loop="loop" >
+            <source src="<?= $this->transcode->video($episode->media->part[0], array('ratingKey' => $item->key)) ?>"  type='video/mp4'>
+            </video>
+            !-->
+
+<script type='text/javascript' src='http://hradec.no-ip.org:40001/plex/js/jwplayer.js'></script>
+<div id='mediaspace'>This text will be replaced</div>
+<script type='text/javascript'>
+  jwplayer('mediaspace').setup({
+    'flashplayer': 'http://hradec.no-ip.org:40001/plex/js/player.swf',
+    'file': '<?= $this->transcode->video($episode->media->part[0], array('ratingKey' => $item->key)) ?>',
+    'backcolor': '333333',
+    'frontcolor': '999999',
+    'controlbar': 'bottom',
+    'duration' : '<?= duration($episode->duration, 'flv')?>',
+    'autostart': 'true',
+    'width': '640',
+    'height': '360'
+  });
+</script>
+            
+            
 		</div>
 
 		<div id="episodes">

@@ -102,15 +102,18 @@ $(function(){
 			</div>
 			<div id="movie-tech" class="clear">
 				<ul>
-				<?php foreach ($item->attributes as $name => $value): ?>
+				<?php GLOBAL $duration; $duration='2:30:00';foreach ($item->attributes as $name => $value): 
+                        $duration = ($name == 'duration') ? duration($value, 'flv') : $duration ;?>
 					<li>
 						<span><?= $name ?></span>:
-						<span><?= ($name == 'duration') ? duration($value, 'movie') : $value ?></span>
+						<span><?= ($name == 'duration') ? $duration  : $value ?></span>
 					</li>
 				<?php endforeach ?>
 				</ul>
 				<div id="movie-actions">
+                    <!--
 					<span class="button gradient"><?= lang('watch') ?></span>
+                    !-->
 					<span class="button gradient"><?= lang('download') ?></span>
 				</div>
 				
@@ -120,7 +123,8 @@ $(function(){
 	  				<?=anchor($this->transcode->video($part, array('ratingKey' => $item->ratingKey)), 
 	  					lang('playlist.part_'.$i), 
 	  					'data-file="'.$part->file.'"
-	  					data-ratio="'.$item->attributes->aspectRatio.'" data-sub="'.$part->subtitles.'"'
+	  					data-ratio="'.$item->attributes->aspectRatio.'"
+						 data-sub="'.$part->subtitles.'"'
 	  				)?>
 	  			</div>
 	  		<?php $i++; endforeach ?>
@@ -153,6 +157,7 @@ $(function(){
 				<?php endforeach ?>
 			</div>
 			
+            <!--
 			<div id="player" class="shadow dark-gradient" style="display:none">
 				<div class="video-js-box">
 					<video id="show-player" class="video-js" x-webkit-airplay="allow">
@@ -161,6 +166,36 @@ $(function(){
 					</video>
 				</div>
 			</div>
+            !-->
+            
+<?php $i = 1; foreach ($item->media->part as $part): ?>
+<script type='text/javascript' src='http://hradec.no-ip.org:40001/plex/js/jwplayer.js'></script>
+<div id='mediaspace'>This text will be replaced</div>
+<script type='text/javascript'>
+  jwplayer('mediaspace').setup({
+    'flashplayer': 'http://hradec.no-ip.org:40001/plex/js/player.swf',
+    'file': '<?=$this->transcode->video($part, array('ratingKey' => $item->ratingKey))?>',
+    'backcolor': '333333',
+    'frontcolor': '999999',
+    'controlbar': 'bottom',
+    'duration': '<?= $duration ?>',
+    'autostart': 'true',
+    'width': '640',
+    'height': '360'
+  });
+</script>
+<?php $i++; endforeach ?>
+
+<a href="http://google.com" 
+onclick="var win=window.open('','mywindow','height=360, width=640');
+win.document.write('\x3Chtml\x3E\x3Chead\x3E\x3Ctitle\x3EPlex\x3C/title\x3E\x3Cstyle\x3Ehtml,body {margin:0;padding:0;}\x3C/style\x3E\x3C/head\x3E\x3Cbody\x3E\x3Cembed src=\'http://hradec.no-ip.org:40001/plex/js/player.swf?file=<?="\\\\\\\\\\'".$this->transcode->video($part, array('ratingKey' => $item->ratingKey))."\\\\\\\\\\'"?>&autoStart=true\' width=\'100%\' height=\'100%\' quality=\'high\' type=\'application/x-shockwave-flash\' pluginspage=\'http://www.macromedia.com/go/getflashplayer\'\x3E\x3C/embed\x3E\x3C/body\x3E\x3C/html\x3E');return false;">
+POP PLAYER OUT!</a></div>
+
+
+  <div class="fw-paragraphbottom"></div>
+
+
+
 				
 		</div> <!-- movie-content -->
 	

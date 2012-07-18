@@ -46,6 +46,10 @@ AddType font/truetype                  ttf
 AddType font/opentype                  otf
 AddType font/woff                      woff
 
+AddType audio/ogg oga ogg
+AddType video/ogg ogv
+AddType video/webm .webm
+
 # gzip compression.
 <IfModule mod_deflate.c>
 # html, txt, css, js, json, xml, htc:
