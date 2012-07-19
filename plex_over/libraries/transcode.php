@@ -5,6 +5,45 @@
  * Create the trancode url for images, music and video
  * 
  */
+ 
+function remote_filesize($url, $user = "", $pw = "")
+{
+    ob_start();
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_HEADER, 1);
+    curl_setopt($ch, CURLOPT_NOBODY, 1);
+     
+    if(!empty($user) && !empty($pw))
+    {
+    $headers = array('Authorization: Basic ' . base64_encode("$user:$pw"));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    }
+     
+    $ok = curl_exec($ch);
+    curl_close($ch);
+    $head = ob_get_contents();
+    ob_end_clean();
+     
+    $regex = '/Content-Length:\s([0-9].+?)\s/';
+    $count = preg_match($regex, $head, $matches);
+     
+    return isset($matches[1]) ? $matches[1] : "20000000";
+}
+ 
+ 
+// TODO : implement video stream using a streamscript / streamer scriipt: 
+// ex: http://www.longtailvideo.com/support/forums/jw-player/setup-issues-and-embedding/359/streamscript
+//
+// This way we don't have to rely on PLEX transcoding features. We can use our own 
+// ffmpeg wrapper together the stream.php!!
+//
+// This way theres no need for tokens, since we would access the original file directly, using the local network!!!
+//
+// It also fixes the player timeslider jumping back to zero when skiping to a new position!
+//
+
+
+ 
 class Transcode {
 
 	// default parameters for image transcoding
@@ -22,7 +61,7 @@ class Transcode {
 	// default parameters for video transcoding
 	public $video_opts = array(
 		'offset'	=> 0,
-		'quality'	=> 5
+		'quality'	=> 5,
 	);
 	/**
 	 * __construct function.
@@ -65,7 +104,7 @@ class Transcode {
 	  $params->height	= $opts->height;
 	  $params->url		= $this->ci->plex_local.$thumb;
       $key = '&X-Plex-Token='.$this->plex_token;
-		
+            
 		if (is_relative_link($thumb))
 		{
 			$thumb = $this->ci->plex_url.$this->img_transpath.http_build_query($params).$key ;
@@ -123,7 +162,11 @@ class Transcode {
 			$params->$key = $value;
 		} 
 		$transcode_url =	$this->ci->plex_url.$this->m3u8_transpath.http_build_query($params);
-	 	
+
+        #grab fakeContentLength directly from file size
+        $duration = remote_filesize($this->ci->plex_local.$part->key);
+        $transcode_url = $transcode_url."&fakeContentLength=".$duration;
+                	 	
 	 	return $transcode_url;
 	}
 	

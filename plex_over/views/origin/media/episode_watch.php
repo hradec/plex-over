@@ -73,15 +73,29 @@
 <div id='mediaspace'>This text will be replaced</div>
 <script type='text/javascript'>
   jwplayer('mediaspace').setup({
-    'flashplayer': 'http://hradec.no-ip.org:40001/plex/js/player.swf',
-    'file': '<?= $this->transcode->video($episode->media->part[0], array('ratingKey' => $item->key)) ?>',
-    'backcolor': '333333',
-    'frontcolor': '999999',
-    'controlbar': 'bottom',
-    'duration' : '<?= duration($episode->duration, 'flv')?>',
-    'autostart': 'true',
-    'width': '640',
-    'height': '360'
+    flashplayer: 'http://hradec.no-ip.org:40001/plex/js/player.swf',
+    file: '<?= $this->transcode->video($episode->media->part[0], array('ratingKey' => $item->key)) ?>',
+    duration : '<?= duration($episode->duration, 'flv')?>',
+    backcolor: '333333',
+    frontcolor: '999999',
+    controlbar: 'bottom',
+    duration: '<?= $duration ?>',
+    autostart: 'true',
+    width: '640',
+    height: '360',
+    provider: 'http',
+    provider:'http',
+    'http.startparam':'offset',
+//    modes: [
+//            { type: 'html5' },
+//            { type: 'flash', src: 'http://hradec.no-ip.org:40001/plex/js/player.swf' }
+//        ],
+    events: {onSeek: function(event) {
+                this.load({file: '<?=$this->transcode->video($part, array('ratingKey' => $item->ratingKey))?>'.replace('offset=0','offset='+event.offset), 
+                duration: '<?= $duration ?>',
+                start: event.offset});
+                this.play(true);
+            }}
   });
 </script>
             

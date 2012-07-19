@@ -102,13 +102,30 @@ $(function(){
 			</div>
 			<div id="movie-tech" class="clear">
 				<ul>
-				<?php GLOBAL $duration; $duration='2:30:00';foreach ($item->attributes as $name => $value): 
+				<?php GLOBAL $duration; $duration='-1';foreach ($item->attributes as $name => $value): 
                         $duration = ($name == 'duration') ? duration($value, 'flv') : $duration ;?>
 					<li>
 						<span><?= $name ?></span>:
-						<span><?= ($name == 'duration') ? $duration  : $value ?></span>
+						<span><?= ($name == 'duration') ? $duration : $value ?></span>
 					</li>
 				<?php endforeach ?>
+                <?php 
+                    if($duration=='-1'){
+                        $sizes=0;
+                        foreach ($item->media->part as $part):
+                            $file = "$part->file";
+                            $cmd = "ffmpeg -i '$file' 2>&1  | grep Duration | cut -d' ' -f4 | tr -d ','";
+                            $ret=0;
+                            $duration = exec($cmd, $ret);
+                            printf("\nDuration: "+$duration);
+                        endforeach;
+                    }
+                ?>
+					<li>
+						<span>Duration</span>:
+						<span><?= $duration ?></span>
+					</li>
+                
 				</ul>
 				<div id="movie-actions">
                     <!--
@@ -167,21 +184,45 @@ $(function(){
 				</div>
 			</div>
             !-->
-            
+
+
 <?php $i = 1; foreach ($item->media->part as $part): ?>
 <script type='text/javascript' src='http://hradec.no-ip.org:40001/plex/js/jwplayer.js'></script>
 <div id='mediaspace'>This text will be replaced</div>
 <script type='text/javascript'>
+// TODO : implement stream using a stream script: 
+// http://www.longtailvideo.com/support/forums/jw-player/setup-issues-and-embedding/359/streamscript
+
+    var flashvars = {
+    file:'<?=$this->transcode->video($part, array('ratingKey' => $item->ratingKey))?>',
+    provider:'http',
+    'http.startparam':'starttime'
+  };
+
   jwplayer('mediaspace').setup({
-    'flashplayer': 'http://hradec.no-ip.org:40001/plex/js/player.swf',
-    'file': '<?=$this->transcode->video($part, array('ratingKey' => $item->ratingKey))?>',
-    'backcolor': '333333',
-    'frontcolor': '999999',
-    'controlbar': 'bottom',
-    'duration': '<?= $duration ?>',
-    'autostart': 'true',
-    'width': '640',
-    'height': '360'
+    flashplayer: 'http://hradec.no-ip.org:40001/plex/js/player.swf',
+    file: '<?=$this->transcode->video($part, array('ratingKey' => $item->ratingKey))?>',
+    backcolor: '333333',
+    frontcolor: '999999',
+    controlbar: 'bottom',
+    duration: '<?= $duration ?>',
+    autostart: 'true',
+    width: '640',
+    height: '360',
+//    skin: 'http://hradec.no-ip.org:40001/plex/js/modieus/modieus.xml',
+    provider: 'http',
+    provider:'http',
+    'http.startparam':'offset',
+//    modes: [
+//            { type: 'html5' },
+//            { type: 'flash', src: 'http://hradec.no-ip.org:40001/plex/js/player.swf' }
+//        ],
+    events: {onSeek: function(event) {
+                this.load({file: '<?=$this->transcode->video($part, array('ratingKey' => $item->ratingKey))?>'.replace('offset=0','offset='+event.offset), 
+                duration: '<?= $duration ?>',
+                start: event.offset});
+                this.play(true);
+            }}
   });
 </script>
 <?php $i++; endforeach ?>
